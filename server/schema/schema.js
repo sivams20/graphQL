@@ -1,12 +1,19 @@
 const graphql = require('graphql');
 
-const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLInt, GraphQLID } = graphql;
+const { GraphQLObjectType,
+    GraphQLString,
+    GraphQLSchema,
+    GraphQLInt,
+    GraphQLID,
+    GraphQLList } = graphql;
 
 // dummy data
 var books = [
-    { name: 'Name of the Wind', genre: 'Fantasy', id: '1', authorId: "1" },
-    { name: 'The Final Empire', genre: 'Fantasy', id: '2', authorId: "2" },
-    { name: 'The Long Earth', genre: 'Sci-Fi', id: '3', authorId: "3" }
+    { name: 'Name of the Wind', genre: 'Fantasy', id: '1', authorId: '1' },
+    { name: 'The Final Empire', genre: 'Fantasy', id: '2', authorId: '2' },
+    { name: 'The Long Earth', genre: 'Sci-Fi', id: '3', authorId: '3' },
+    { name: 'Monk Who Sold His Ferrari', genre: 'Fiction', id: '4', authorId: '1' },
+    { name: 'Wise and otherwise', genre: 'Real life stories', id: '5', authorId: '2' }
 ];
 
 var authors = [
@@ -36,7 +43,16 @@ const AuthorType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLString },
         name: { type: GraphQLString },
-        age: { type: GraphQLInt }
+        age: { type: GraphQLInt },
+        books: {
+            type: new GraphQLList(BookType),
+            resolve(parent, args) {
+                let result = books.filter(function (item) {
+                    return item.authorId === parent.id;
+                });
+                return result;
+            }
+        }
     })
 });
 
